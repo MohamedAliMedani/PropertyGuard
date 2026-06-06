@@ -1,0 +1,8 @@
+D:\PropertyGuard\backend\src\PropertyGuard.API\obj\Debug\net10.0\PropertyGuard.API.csproj.AssemblyReference.cache
+D:\PropertyGuard\backend\src\PropertyGuard.API\obj\Debug\net10.0\rpswa.dswa.cache.json
+D:\PropertyGuard\backend\src\PropertyGuard.API\obj\Debug\net10.0\PropertyGuard.API.GeneratedMSBuildEditorConfig.editorconfig
+D:\PropertyGuard\backend\src\PropertyGuard.API\obj\Debug\net10.0\PropertyGuard.API.AssemblyInfoInputs.cache
+D:\PropertyGuard\backend\src\PropertyGuard.API\obj\Debug\net10.0\PropertyGuard.API.AssemblyInfo.cs
+D:\PropertyGuard\backend\src\PropertyGuard.API\obj\Debug\net10.0\PropertyGuard.API.csproj.CoreCompileInputs.cache
+D:\PropertyGuard\backend\src\PropertyGuard.API\obj\Debug\net10.0\PropertyGuard.API.MvcApplicationPartsAssemblyInfo.cs
+D:\PropertyGuard\backend\src\PropertyGuard.API\obj\Debug\net10.0\PropertyGuard.API.MvcApplicationPartsAssemblyInfo.cache

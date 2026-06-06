@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wc -l /d/PropertyGuard/frontend/src/i18n/*.json)",
+      "Bash(dotnet ef:*)",
+      "Bash(dotnet tool:*)",
+      "Bash(curl -s http://localhost:5233/api/packages)",
+      "Bash(curl -s -X POST http://localhost:5233/api/auth/login -H \"Content-Type: application/json\" -d '{\"\"\"\"email\"\"\"\":\"\"\"\"ahmed@example.com\"\"\"\",\"\"\"\"password\"\"\"\":\"\"\"\"Customer@123\"\"\"\"}')"
+    ]
+  }
+}

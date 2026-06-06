@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/PropertyGuard.API/PropertyGuard.API.csproj" />
+    <Project Path="src/PropertyGuard.Core/PropertyGuard.Core.csproj" />
+    <Project Path="src/PropertyGuard.Infrastructure/PropertyGuard.Infrastructure.csproj" />
+  </Folder>
+</Solution>

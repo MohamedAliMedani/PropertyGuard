@@ -1,0 +1,142 @@
+import { Outlet, Link, useLocation } from "react-router";
+import { Home, Briefcase, Calendar, Shield, Menu } from "lucide-react";
+import { Button } from "../components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import { useState } from "react";
+import { cn } from "../components/ui/utils";
+
+export default function ExpertLayout() {
+  const location = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [expertRole, setExpertRole] = useState<string>("lawyer");
+
+  const navigation = [
+    { name: "Dashboard", href: "/expert", icon: Home },
+    { name: "My Cases", href: "/expert/cases", icon: Briefcase },
+    { name: "Schedule", href: "/expert/schedule", icon: Calendar },
+  ];
+
+  const isActive = (href: string) => {
+    if (href === "/expert") {
+      return location.pathname === href;
+    }
+    return location.pathname.startsWith(href);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Top Navigation */}
+      <nav className="bg-white border-b border-border sticky top-0 z-50 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center gap-4">
+              <button
+                className="lg:hidden"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+              <Link to="/expert" className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-[--color-trust-blue] to-[--color-premium-gold] rounded-lg flex items-center justify-center">
+                  <Shield className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-lg font-semibold text-[--color-trust-blue]">
+                  Expert Portal
+                </span>
+              </Link>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Select value={expertRole} onValueChange={setExpertRole}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="lawyer">Lawyer</SelectItem>
+                  <SelectItem value="engineer">Engineer</SelectItem>
+                  <SelectItem value="government">Gov. Expert</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex gap-8">
+          {/* Sidebar - Desktop */}
+          <aside className="hidden lg:block w-64 shrink-0">
+            <div className="bg-white rounded-xl shadow-sm p-4 sticky top-24">
+              <div className="mb-4 p-3 bg-[--color-premium-gold]/10 rounded-lg border border-[--color-premium-gold]/30">
+                <p className="text-xs text-muted-foreground">Current Role</p>
+                <p className="font-semibold text-[--color-trust-blue] capitalize">
+                  {expertRole}
+                </p>
+              </div>
+              <nav className="space-y-1">
+                {navigation.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      className={cn(
+                        "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
+                        isActive(item.href)
+                          ? "bg-[--color-trust-blue] text-white"
+                          : "text-foreground hover:bg-gray-100"
+                      )}
+                    >
+                      <Icon className="w-5 h-5" />
+                      <span>{item.name}</span>
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
+          </aside>
+
+          {/* Mobile Sidebar */}
+          {sidebarOpen && (
+            <div className="lg:hidden fixed inset-0 z-40 bg-black/50" onClick={() => setSidebarOpen(false)}>
+              <div className="bg-white w-64 h-full p-4" onClick={(e) => e.stopPropagation()}>
+                <div className="mb-4 p-3 bg-[--color-premium-gold]/10 rounded-lg border border-[--color-premium-gold]/30">
+                  <p className="text-xs text-muted-foreground">Current Role</p>
+                  <p className="font-semibold text-[--color-trust-blue] capitalize">
+                    {expertRole}
+                  </p>
+                </div>
+                <nav className="space-y-1">
+                  {navigation.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <Link
+                        key={item.name}
+                        to={item.href}
+                        onClick={() => setSidebarOpen(false)}
+                        className={cn(
+                          "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
+                          isActive(item.href)
+                            ? "bg-[--color-trust-blue] text-white"
+                            : "text-foreground hover:bg-gray-100"
+                        )}
+                      >
+                        <Icon className="w-5 h-5" />
+                        <span>{item.name}</span>
+                      </Link>
+                    );
+                  })}
+                </nav>
+              </div>
+            </div>
+          )}
+
+          {/* Main Content */}
+          <main className="flex-1 min-w-0">
+            <Outlet />
+          </main>
+        </div>
+      </div>
+    </div>
+  );
+}
