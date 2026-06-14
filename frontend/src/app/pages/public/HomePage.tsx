@@ -102,7 +102,7 @@ export function HomePage() {
                   {t('home.startNow')}
                 </Link>
                 <Link
-                  to="/pricing"
+                  to="/services#pricing"
                   className="px-8 py-4 bg-white/10 backdrop-blur-sm text-white rounded-xl hover:bg-white/20 transition-all border border-white/20 text-center font-medium"
                 >
                   {t('common.viewPricing')}

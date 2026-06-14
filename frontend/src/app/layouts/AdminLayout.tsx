@@ -1,9 +1,10 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router';
-import { Shield, LayoutDashboard, Users, UserCog, FileText, CreditCard, MessageSquare, BarChart3, Bell, LogOut, Menu } from 'lucide-react';
+import { LayoutDashboard, Users, UserCog, FileText, CreditCard, MessageSquare, BarChart3, Bell, LogOut, Menu } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
 import { LanguageSwitcher } from '../components/shared/LanguageSwitcher';
+import { DarekLogo } from '../components/shared/DarekLogo';
 
 export function AdminLayout() {
   const location = useLocation();
@@ -35,9 +36,7 @@ export function AdminLayout() {
               <Menu className="w-5 h-5" />
             </button>
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-[#059669] to-[#d97706] rounded-lg flex items-center justify-center">
-                <Shield className="w-5 h-5 text-white" />
-              </div>
+              <DarekLogo size="sm" />
               <span className="font-bold text-lg hidden sm:inline">{t('nav.propertyGuard')}</span>
             </Link>
             <span className="hidden sm:inline text-sm text-gray-300 border-s border-gray-600 ps-3 ms-3">
@@ -64,7 +63,7 @@ export function AdminLayout() {
       </header>
       <div className="flex">
         <aside className={`fixed lg:sticky top-16 start-0 z-30 h-[calc(100vh-4rem)] w-64 bg-white border-e border-border transition-transform lg:translate-x-0 ${
-          sidebarOpen ? 'translate-x-0 rtl:-translate-x-0' : '-translate-x-full rtl:translate-x-full'
+          sidebarOpen ? 'translate-x-0' : 'max-lg:-translate-x-full max-lg:rtl:translate-x-full'
         }`}>
           <nav className="p-4 space-y-1">
             {navigation.map((item) => {

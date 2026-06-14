@@ -1,3 +1,5 @@
+using PropertyGuard.Core.Enums;
+
 namespace PropertyGuard.Core.Entities;
 
 public class ServicePackage
@@ -12,6 +14,8 @@ public class ServicePackage
     public string FeaturesAr { get; set; } = "[]"; // JSON array (Arabic)
     public bool IsPopular { get; set; }
     public bool IsActive { get; set; } = true;
+    public ExpertRole RequiredExpertRole { get; set; }
+    public int EstimatedDays { get; set; } = 7;
 
     // Navigation
     public ICollection<VerificationRequest> Requests { get; set; } = new List<VerificationRequest>();

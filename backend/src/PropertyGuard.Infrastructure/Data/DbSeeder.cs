@@ -107,36 +107,55 @@ public static class DbSeeder
             context.ServicePackages.AddRange(
                 new ServicePackage
                 {
-                    Name = "Legal Verification",
-                    NameAr = "التحقق القانوني",
+                    Name = "Contract Review",
+                    NameAr = "مراجعة العقود",
+                    Price = 3000,
+                    Description = "Lawyer reviews your property contracts and sale agreements",
+                    DescriptionAr = "محامي يراجع عقود العقار واتفاقيات البيع",
+                    Features = "[\"Contract review\",\"Ownership verification\",\"Legal compliance check\",\"Detailed legal report\"]",
+                    FeaturesAr = "[\"مراجعة العقد\",\"التحقق من الملكية\",\"فحص الامتثال القانوني\",\"تقرير قانوني مفصل\"]",
+                    IsPopular = false,
+                    RequiredExpertRole = ExpertRole.Lawyer,
+                    EstimatedDays = 5
+                },
+                new ServicePackage
+                {
+                    Name = "Engineering Inspection",
+                    NameAr = "الفحص الهندسي",
                     Price = 5000,
-                    Description = "Ownership & legal documents verification",
-                    DescriptionAr = "التحقق من الملكية والمستندات القانونية",
-                    Features = "[\"Ownership verification\",\"Contract review\",\"Legal compliance\"]",
-                    FeaturesAr = "[\"التحقق من الملكية\",\"مراجعة العقد\",\"الامتثال القانوني\"]",
-                    IsPopular = false
+                    Description = "Certified engineer visits the unit on-site to inspect building quality, structure, and safety",
+                    DescriptionAr = "مهندس معتمد يزور الوحدة في الموقع لفحص جودة البناء والهيكل والسلامة",
+                    Features = "[\"On-site unit visit\",\"Structural inspection\",\"Building quality assessment\",\"Detailed photo report\"]",
+                    FeaturesAr = "[\"زيارة الوحدة في الموقع\",\"فحص هيكلي\",\"تقييم جودة البناء\",\"تقرير مصور مفصل\"]",
+                    IsPopular = true,
+                    RequiredExpertRole = ExpertRole.Engineer,
+                    EstimatedDays = 7
                 },
                 new ServicePackage
                 {
-                    Name = "Premium Package",
-                    NameAr = "الباقة المميزة",
-                    Price = 12000,
-                    Description = "Legal + Engineering inspection",
-                    DescriptionAr = "التحقق القانوني + الفحص الهندسي",
-                    Features = "[\"All legal services\",\"Engineering inspection\",\"Quality assessment\"]",
-                    FeaturesAr = "[\"جميع الخدمات القانونية\",\"الفحص الهندسي\",\"تقييم الجودة\"]",
-                    IsPopular = true
+                    Name = "Government Verification",
+                    NameAr = "التحقق الحكومي",
+                    Price = 4000,
+                    Description = "Lawyer verifies with government authorities (City Authority, land registry, permits)",
+                    DescriptionAr = "محامي يتحقق من الجهات الحكومية (جهاز المدينة، السجل العقاري، التراخيص)",
+                    Features = "[\"City Authority verification\",\"Land registry check\",\"Building permits verification\",\"Zoning compliance\"]",
+                    FeaturesAr = "[\"التحقق من جهاز المدينة\",\"فحص السجل العقاري\",\"التحقق من تراخيص البناء\",\"فحص تصنيف الأراضي\"]",
+                    IsPopular = false,
+                    RequiredExpertRole = ExpertRole.Lawyer,
+                    EstimatedDays = 7
                 },
                 new ServicePackage
                 {
-                    Name = "Full Protection",
-                    NameAr = "الحماية الكاملة",
-                    Price = 14000,
-                    Description = "Complete verification package",
-                    DescriptionAr = "باقة التحقق الكاملة",
-                    Features = "[\"Legal verification\",\"Engineering inspection\",\"Government verification\",\"Priority support\"]",
-                    FeaturesAr = "[\"التحقق القانوني\",\"الفحص الهندسي\",\"التحقق الحكومي\",\"دعم أولوية\"]",
-                    IsPopular = false
+                    Name = "Quick Consultation",
+                    NameAr = "استشارة سريعة",
+                    Price = 1500,
+                    Description = "Fast expert consultation before buying — get quick advice on your property deal",
+                    DescriptionAr = "استشارة سريعة من خبير قبل الشراء — احصل على نصيحة سريعة لصفقتك العقارية",
+                    Features = "[\"Expert consultation\",\"Quick response within 24h\",\"Written recommendation\",\"Follow-up support\"]",
+                    FeaturesAr = "[\"استشارة خبير\",\"رد سريع خلال 24 ساعة\",\"توصية مكتوبة\",\"دعم متابعة\"]",
+                    IsPopular = false,
+                    RequiredExpertRole = ExpertRole.Lawyer,
+                    EstimatedDays = 2
                 }
             );
             await context.SaveChangesAsync();

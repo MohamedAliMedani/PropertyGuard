@@ -8,7 +8,7 @@ import { AdminLayout } from "./layouts/AdminLayout";
 // Public Pages
 import { HomePage } from "./pages/public/HomePage";
 import { ServicesPage } from "./pages/public/ServicesPage";
-import { PricingPage } from "./pages/public/PricingPage";
+import { Navigate } from "react-router";
 import { AboutPage } from "./pages/public/AboutPage";
 import { ContactPage } from "./pages/public/ContactPage";
 
@@ -40,7 +40,10 @@ import { Analytics } from "./pages/admin/Analytics";
 
 // Auth (simplified for demo)
 import { LoginPage } from "./pages/auth/LoginPage";
+import { RegisterPage } from "./pages/auth/RegisterPage";
+import { ForgotPasswordPage } from "./pages/auth/ForgotPasswordPage";
 import { NotFound } from "./pages/NotFound";
+import { ProtectedRoute } from "./components/shared/ProtectedRoute";
 
 export const router = createBrowserRouter([
   {
@@ -54,18 +57,20 @@ export const router = createBrowserRouter([
         children: [
           { index: true, Component: HomePage },
           { path: "services", Component: ServicesPage },
-          { path: "pricing", Component: PricingPage },
+          { path: "pricing", element: <Navigate to="/services#pricing" replace /> },
           { path: "about", Component: AboutPage },
           { path: "contact", Component: ContactPage },
         ],
       },
       // Auth
       { path: "login", Component: LoginPage },
+      { path: "register", Component: RegisterPage },
+      { path: "forgot-password", Component: ForgotPasswordPage },
       
       // Customer Portal
       {
         path: "customer",
-        Component: CustomerPortalLayout,
+        element: <ProtectedRoute roles={['Customer']}><CustomerPortalLayout /></ProtectedRoute>,
         children: [
           { index: true, Component: CustomerDashboard },
           { path: "create-request", Component: CreateRequest },
@@ -81,7 +86,7 @@ export const router = createBrowserRouter([
       // Expert Portal
       {
         path: "expert/lawyer",
-        Component: ExpertPortalLayout,
+        element: <ProtectedRoute roles={['Lawyer']}><ExpertPortalLayout /></ProtectedRoute>,
         children: [
           { index: true, Component: LawyerDashboard },
           { path: "case/:id", Component: ExpertCaseDetails },
@@ -90,7 +95,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "expert/engineer",
-        Component: ExpertPortalLayout,
+        element: <ProtectedRoute roles={['Engineer']}><ExpertPortalLayout /></ProtectedRoute>,
         children: [
           { index: true, Component: EngineerDashboard },
           { path: "case/:id", Component: ExpertCaseDetails },
@@ -99,7 +104,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "expert/government",
-        Component: ExpertPortalLayout,
+        element: <ProtectedRoute roles={['GovExpert']}><ExpertPortalLayout /></ProtectedRoute>,
         children: [
           { index: true, Component: GovExpertDashboard },
           { path: "case/:id", Component: ExpertCaseDetails },
@@ -109,7 +114,7 @@ export const router = createBrowserRouter([
       // Admin Portal
       {
         path: "admin",
-        Component: AdminLayout,
+        element: <ProtectedRoute roles={['Admin']}><AdminLayout /></ProtectedRoute>,
         children: [
           { index: true, Component: AdminDashboard },
           { path: "users", Component: UserManagement },

@@ -70,11 +70,51 @@ public class PaymentsController : ControllerBase
 
         _context.Payments.Add(payment);
 
-        // Move request to Under Review after payment
+        // After payment: auto-assign to least-busy expert and advance status
         if (request.Status == RequestStatus.Submitted)
         {
-            request.Status = RequestStatus.UnderReview;
-            request.Progress = 10;
+            var package = await _context.ServicePackages.FindAsync(request.ServicePackageId);
+            if (package != null)
+            {
+                // Map package's RequiredExpertRole to UserRole for querying experts
+                var userRole = package.RequiredExpertRole switch
+                {
+                    ExpertRole.Engineer => UserRole.Engineer,
+                    ExpertRole.GovExpert => UserRole.GovExpert,
+                    _ => UserRole.Lawyer
+                };
+
+                // Find the expert with the fewest active assignments (load balancing)
+                var leastBusyExpert = await _context.Users
+                    .Where(u => u.Role == userRole && u.IsActive)
+                    .Select(u => new
+                    {
+                        u.Id,
+                        ActiveCount = u.ExpertAssignments.Count(ea => ea.Status != AssignmentStatus.Completed && ea.Status != AssignmentStatus.Cancelled)
+                    })
+                    .OrderBy(u => u.ActiveCount)
+                    .FirstOrDefaultAsync();
+
+                if (leastBusyExpert != null)
+                {
+                    _context.ExpertAssignments.Add(new ExpertAssignment
+                    {
+                        RequestId = request.Id,
+                        ExpertId = leastBusyExpert.Id,
+                        Role = package.RequiredExpertRole,
+                        Status = AssignmentStatus.Assigned
+                    });
+
+                    request.Status = RequestStatus.ExpertReview;
+                    request.Progress = 25;
+                }
+                else
+                {
+                    // No expert available, move to UnderReview for admin to handle
+                    request.Status = RequestStatus.UnderReview;
+                    request.Progress = 10;
+                }
+            }
         }
 
         await _context.SaveChangesAsync();

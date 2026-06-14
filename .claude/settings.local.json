@@ -5,7 +5,13 @@
       "Bash(dotnet ef:*)",
       "Bash(dotnet tool:*)",
       "Bash(curl -s http://localhost:5233/api/packages)",
-      "Bash(curl -s -X POST http://localhost:5233/api/auth/login -H \"Content-Type: application/json\" -d '{\"\"\"\"email\"\"\"\":\"\"\"\"ahmed@example.com\"\"\"\",\"\"\"\"password\"\"\"\":\"\"\"\"Customer@123\"\"\"\"}')"
+      "Bash(curl -s -X POST http://localhost:5233/api/auth/login -H \"Content-Type: application/json\" -d '{\"\"\"\"email\"\"\"\":\"\"\"\"ahmed@example.com\"\"\"\",\"\"\"\"password\"\"\"\":\"\"\"\"Customer@123\"\"\"\"}')",
+      "Bash(taskkill //F //PID 35148)",
+      "Bash(xxd d:/PropertyGuard/frontend/src/i18n/ar.json)",
+      "Bash(taskkill /PID 45764 /F)",
+      "Bash(taskkill //PID 45764 //F)",
+      "Bash(taskkill //IM PropertyGuard.API.exe //F)",
+      "Bash(taskkill //IM dotnet.exe //F)"
     ]
   }
 }

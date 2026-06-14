@@ -56,9 +56,10 @@ public class AdminController : ControllerBase
             MonthlyData = monthlyData,
             PackageDistribution = new()
             {
-                new() { Name = "Basic", Value = 30, Color = "#1e3a8a" },
-                new() { Name = "Premium", Value = 50, Color = "#059669" },
-                new() { Name = "Full Protection", Value = 20, Color = "#8b5cf6" }
+                new() { Name = "Contract Review", Value = 30, Color = "#1e3a8a" },
+                new() { Name = "Engineering", Value = 35, Color = "#059669" },
+                new() { Name = "Gov. Verification", Value = 20, Color = "#8b5cf6" },
+                new() { Name = "Consultation", Value = 15, Color = "#f59e0b" }
             }
         });
     }

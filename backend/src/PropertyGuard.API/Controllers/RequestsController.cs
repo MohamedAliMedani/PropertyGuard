@@ -129,6 +129,8 @@ public class RequestsController : ControllerBase
             .FirstOrDefaultAsync();
         var nextNumber = (lastRequest?.Id ?? 0) + 1;
 
+        var package = await _context.ServicePackages.FindAsync(dto.ServicePackageId);
+
         var request = new VerificationRequest
         {
             RequestNumber = $"REQ-{nextNumber:D3}",
@@ -138,7 +140,7 @@ public class RequestsController : ControllerBase
             Status = RequestStatus.Submitted,
             Progress = 0,
             SubmittedDate = DateTime.UtcNow,
-            EstimatedCompletion = DateTime.UtcNow.AddDays(10)
+            EstimatedCompletion = DateTime.UtcNow.AddDays(package?.EstimatedDays ?? 7)
         };
         _context.VerificationRequests.Add(request);
         await _context.SaveChangesAsync();
@@ -146,8 +148,6 @@ public class RequestsController : ControllerBase
         // Create conversation for this request
         _context.Conversations.Add(new Conversation { RequestId = request.Id });
         await _context.SaveChangesAsync();
-
-        var package = await _context.ServicePackages.FindAsync(dto.ServicePackageId);
 
         return CreatedAtAction(nameof(GetRequest), new { id = request.Id }, new RequestListDto
         {
@@ -188,10 +188,8 @@ public class RequestsController : ControllerBase
         var steps = new List<(string Title, RequestStatus MinStatus)>
         {
             ("Request Submitted", RequestStatus.Submitted),
-            ("Under Review", RequestStatus.UnderReview),
-            ("Lawyer Review", RequestStatus.LawyerReview),
-            ("Engineer Visit", RequestStatus.EngineerVisit),
-            ("Government Verification", RequestStatus.GovernmentVerification),
+            ("Payment & Assignment", RequestStatus.UnderReview),
+            ("Expert Review", RequestStatus.ExpertReview),
             ("Completed", RequestStatus.Completed),
         };
 

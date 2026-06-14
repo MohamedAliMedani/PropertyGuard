@@ -81,6 +81,8 @@ export interface ServicePackage {
   features: string[];
   featuresAr: string[];
   isPopular: boolean;
+  requiredExpertRole: 'Lawyer' | 'Engineer' | 'GovExpert';
+  estimatedDays: number;
 }
 
 export interface Payment {

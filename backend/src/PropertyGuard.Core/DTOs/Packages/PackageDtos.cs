@@ -11,4 +11,6 @@ public class PackageDto
     public List<string> Features { get; set; } = new();
     public List<string> FeaturesAr { get; set; } = new();
     public bool IsPopular { get; set; }
+    public string RequiredExpertRole { get; set; } = string.Empty;
+    public int EstimatedDays { get; set; }
 }

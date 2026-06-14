@@ -1,18 +1,29 @@
 import { Outlet, Link, useLocation } from 'react-router';
-import { Shield, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '../components/shared/LanguageSwitcher';
+import { useAuth } from '../../contexts/AuthContext';
+import { DarekLogo } from '../components/shared/DarekLogo';
 
 export function PublicLayout() {
   const location = useLocation();
   const { t } = useTranslation();
+  const { user, isAuthenticated } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const getDashboardLink = () => {
+    if (!user) return '/customer';
+    if (user.role === 'Admin') return '/admin';
+    if (user.role === 'Lawyer') return '/expert/lawyer';
+    if (user.role === 'Engineer') return '/expert/engineer';
+    if (user.role === 'GovExpert') return '/expert/government';
+    return '/customer';
+  };
 
   const navigation = [
     { name: t('common.home'), href: '/' },
     { name: t('common.services'), href: '/services' },
-    { name: t('common.pricing'), href: '/pricing' },
     { name: t('common.about'), href: '/about' },
     { name: t('common.contact'), href: '/contact' },
   ];
@@ -23,9 +34,7 @@ export function PublicLayout() {
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#1e3a8a] to-[#059669] rounded-lg flex items-center justify-center">
-                <Shield className="w-6 h-6 text-white" />
-              </div>
+              <DarekLogo />
               <div>
                 <div className="font-bold text-lg text-[#0f172a]">{t('nav.propertyGuard')}</div>
                 <div className="text-xs text-[#059669]">{t('home.heroTitle')}</div>
@@ -43,13 +52,22 @@ export function PublicLayout() {
 
             <div className="hidden md:flex items-center gap-3">
               <LanguageSwitcher />
-              <Link to="/login" className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                {t('common.login')}
-              </Link>
-              <Link to="/customer/create-request"
-                className="px-5 py-2.5 bg-[#059669] text-white rounded-lg hover:bg-[#047857] transition-colors shadow-sm">
-                {t('nav.startVerification')}
-              </Link>
+              {isAuthenticated ? (
+                <Link to={getDashboardLink()}
+                  className="px-5 py-2.5 bg-[#059669] text-white rounded-lg hover:bg-[#047857] transition-colors shadow-sm">
+                  {t('common.dashboard')}
+                </Link>
+              ) : (
+                <>
+                  <Link to="/login" className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    {t('common.login')}
+                  </Link>
+                  <Link to="/customer/create-request"
+                    className="px-5 py-2.5 bg-[#059669] text-white rounded-lg hover:bg-[#047857] transition-colors shadow-sm">
+                    {t('nav.startVerification')}
+                  </Link>
+                </>
+              )}
             </div>
 
             <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 text-foreground">
@@ -70,10 +88,17 @@ export function PublicLayout() {
                   <LanguageSwitcher />
                 </div>
                 <div className="flex flex-col gap-2 pt-2 border-t border-border">
-                  <Link to="/login" onClick={() => setMobileMenuOpen(false)}
-                    className="px-4 py-2 text-sm text-center border border-border rounded-lg">{t('common.login')}</Link>
-                  <Link to="/customer/create-request" onClick={() => setMobileMenuOpen(false)}
-                    className="px-4 py-2 text-sm text-center bg-[#059669] text-white rounded-lg">{t('nav.startVerification')}</Link>
+                  {isAuthenticated ? (
+                    <Link to={getDashboardLink()} onClick={() => setMobileMenuOpen(false)}
+                      className="px-4 py-2 text-sm text-center bg-[#059669] text-white rounded-lg">{t('common.dashboard')}</Link>
+                  ) : (
+                    <>
+                      <Link to="/login" onClick={() => setMobileMenuOpen(false)}
+                        className="px-4 py-2 text-sm text-center border border-border rounded-lg">{t('common.login')}</Link>
+                      <Link to="/customer/create-request" onClick={() => setMobileMenuOpen(false)}
+                        className="px-4 py-2 text-sm text-center bg-[#059669] text-white rounded-lg">{t('nav.startVerification')}</Link>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -90,9 +115,7 @@ export function PublicLayout() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-[#059669] to-[#d97706] rounded-lg flex items-center justify-center">
-                  <Shield className="w-6 h-6 text-white" />
-                </div>
+                <DarekLogo />
                 <div>
                   <div className="font-bold text-lg">{t('nav.propertyGuard')}</div>
                   <div className="text-xs text-[#059669]">{t('home.heroTitle')}</div>
@@ -103,7 +126,7 @@ export function PublicLayout() {
               <h4 className="font-semibold mb-4">{t('common.services')}</h4>
               <ul className="space-y-2 text-sm text-gray-400">
                 <li><Link to="/services" className="hover:text-white transition-colors">{t('common.services')}</Link></li>
-                <li><Link to="/pricing" className="hover:text-white transition-colors">{t('common.pricing')}</Link></li>
+                <li><Link to="/services#pricing" className="hover:text-white transition-colors">{t('common.pricing')}</Link></li>
                 <li><Link to="/about" className="hover:text-white transition-colors">{t('common.about')}</Link></li>
                 <li><Link to="/contact" className="hover:text-white transition-colors">{t('common.contact')}</Link></li>
               </ul>

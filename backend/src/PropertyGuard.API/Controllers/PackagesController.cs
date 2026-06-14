@@ -34,7 +34,9 @@ public class PackagesController : ControllerBase
             DescriptionAr = sp.DescriptionAr,
             Features = JsonSerializer.Deserialize<List<string>>(sp.Features) ?? new(),
             FeaturesAr = JsonSerializer.Deserialize<List<string>>(sp.FeaturesAr) ?? new(),
-            IsPopular = sp.IsPopular
+            IsPopular = sp.IsPopular,
+            RequiredExpertRole = sp.RequiredExpertRole.ToString(),
+            EstimatedDays = sp.EstimatedDays
         }).ToList();
 
         return Ok(result);
