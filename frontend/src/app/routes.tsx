@@ -34,6 +34,7 @@ import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { UserManagement } from "./pages/admin/UserManagement";
 import { ExpertManagement } from "./pages/admin/ExpertManagement";
 import { RequestManagement } from "./pages/admin/RequestManagement";
+import { AdminRequestDetails } from "./pages/admin/AdminRequestDetails";
 import { TransactionManagement } from "./pages/admin/TransactionManagement";
 import { SupportTickets } from "./pages/admin/SupportTickets";
 import { Analytics } from "./pages/admin/Analytics";
@@ -120,6 +121,7 @@ export const router = createBrowserRouter([
           { path: "users", Component: UserManagement },
           { path: "experts", Component: ExpertManagement },
           { path: "requests", Component: RequestManagement },
+          { path: "requests/:id", Component: AdminRequestDetails },
           { path: "transactions", Component: TransactionManagement },
           { path: "support", Component: SupportTickets },
           { path: "analytics", Component: Analytics },

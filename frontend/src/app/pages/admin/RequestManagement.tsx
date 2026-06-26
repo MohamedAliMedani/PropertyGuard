@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import { Search } from "lucide-react";
 import { StatusBadge } from "../../components/StatusBadge";
 import { useTranslation } from 'react-i18next';
@@ -6,6 +7,7 @@ import { useAdminRequests } from '../../../hooks/useAdmin';
 
 export function RequestManagement() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { data: requests, isLoading, error } = useAdminRequests();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -104,7 +106,7 @@ export function RequestManagement() {
                 <td className="px-6 py-4"><StatusBadge status={req.status} /></td>
                 <td className="px-6 py-4 text-sm text-muted-foreground">{req.assignedTo || t('admin.notAssignedYet')}</td>
                 <td className="px-6 py-4">
-                  <button className="text-sm text-[#059669] hover:underline">{t('common.manage')}</button>
+                  <button onClick={() => navigate(`/admin/requests/${req.id}`)} className="text-sm text-[#059669] hover:underline">{t('common.manage')}</button>
                 </td>
               </tr>
             ))}

@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { useTranslation } from 'react-i18next';
 import { useRequest, useUpdateRequestStatus } from "../../../hooks/useRequests";
 import { useUploadDocument } from "../../../hooks/useDocuments";
+import { documentsApi } from "../../../api/documents";
 
 export function ExpertCaseDetails() {
   const { t } = useTranslation();
@@ -25,17 +26,21 @@ export function ExpertCaseDetails() {
   const handleSubmitReport = async () => {
     if (!request) return;
 
-    const statusMap: Record<string, number> = {
-      approved: 4,
-      approved_with_conditions: 3,
-      requires_attention: 2,
-      rejected: 5,
+    // RequestStatus enum: Submitted=0, UnderReview=1, ExpertReview=2, Completed=3, Rejected=4
+    const statusMap: Record<string, { status: number; progress: number }> = {
+      approved: { status: 3, progress: 100 },
+      approved_with_conditions: { status: 3, progress: 100 },
+      requires_attention: { status: 2, progress: 50 },
+      rejected: { status: 4, progress: 100 },
     };
+
+    const mapped = statusMap[selectedStatus] ?? { status: 2, progress: 50 };
 
     try {
       await updateStatus.mutateAsync({
         id: request.id,
-        status: statusMap[selectedStatus] ?? 3,
+        status: mapped.status,
+        progress: mapped.progress,
         notes,
       });
       toast.success(t('expert.reportSubmitted'));
@@ -75,7 +80,7 @@ export function ExpertCaseDetails() {
                 ? request.documents.map((doc) => (
                     <div key={doc.id} className="flex items-center justify-between p-3 bg-background rounded-lg border border-border">
                       <span className="text-sm">{doc.fileName}</span>
-                      <button className="text-sm text-[#059669] hover:underline flex items-center gap-1">
+                      <button onClick={() => documentsApi.download(doc.id)} className="text-sm text-[#059669] hover:underline flex items-center gap-1">
                         <Download className="w-4 h-4" />
                         {t('common.download')}
                       </button>

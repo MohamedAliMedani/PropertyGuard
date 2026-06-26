@@ -27,4 +27,14 @@ export const requestsApi = {
     const response = await client.put(`/requests/${id}/status`, data);
     return response.data;
   },
+
+  downloadReport: async (id: number) => {
+    const response = await client.get(`/requests/${id}/report`, { responseType: 'blob' });
+    const url = window.URL.createObjectURL(response.data);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `REQ-${id}-Report.pdf`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  },
 };

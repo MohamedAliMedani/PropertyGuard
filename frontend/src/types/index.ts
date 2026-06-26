@@ -60,6 +60,7 @@ export interface AssignedExpert {
   name: string;
   status: string;
   hasReport: boolean;
+  reportContent?: string;
 }
 
 export interface Document {

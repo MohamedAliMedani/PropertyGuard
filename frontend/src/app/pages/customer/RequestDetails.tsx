@@ -4,6 +4,8 @@ import { TimelineStep } from "../../components/TimelineStep";
 import { StatusBadge } from "../../components/StatusBadge";
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../../../hooks/useRequests';
+import { documentsApi } from '../../../api/documents';
+import { requestsApi } from '../../../api/requests';
 
 export function RequestDetails() {
   const { id } = useParams();
@@ -27,7 +29,7 @@ export function RequestDetails() {
           </div>
           <p className="text-muted-foreground">{request.propertyType} - {request.location}</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-[#059669] text-white rounded-lg hover:bg-[#047857] transition-colors">
+        <button onClick={() => requestsApi.downloadReport(Number(id))} className="flex items-center gap-2 px-4 py-2 bg-[#059669] text-white rounded-lg hover:bg-[#047857] transition-colors">
           <Download className="w-4 h-4" />
           {t('request.downloadReport')}
         </button>
@@ -104,7 +106,7 @@ export function RequestDetails() {
                       <div className="text-xs text-muted-foreground">{t('request.uploadedBy')} {doc.uploadedBy}</div>
                     </div>
                   </div>
-                  <button className="text-sm text-[#059669] hover:underline">{t('common.download')}</button>
+                  <button onClick={() => documentsApi.download(doc.id)} className="text-sm text-[#059669] hover:underline">{t('common.download')}</button>
                 </div>
               ))}
               {documents.length === 0 && (
@@ -127,7 +129,7 @@ export function RequestDetails() {
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-muted-foreground">Status: {expert.status}</span>
                     {expert.hasReport && (
-                      <button className="text-[#059669] hover:underline">{t('request.viewReport')}</button>
+                      <button onClick={() => requestsApi.downloadReport(Number(id))} className="text-[#059669] hover:underline">{t('request.viewReport')}</button>
                     )}
                   </div>
                 </div>
