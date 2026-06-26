@@ -11,7 +11,10 @@
       "Bash(taskkill /PID 45764 /F)",
       "Bash(taskkill //PID 45764 //F)",
       "Bash(taskkill //IM PropertyGuard.API.exe //F)",
-      "Bash(taskkill //IM dotnet.exe //F)"
+      "Bash(taskkill //IM dotnet.exe //F)",
+      "Bash(taskkill //PID 37220 //F)",
+      "Bash(tasklist)",
+      "Bash(dotnet list:*)"
     ]
   }
 }

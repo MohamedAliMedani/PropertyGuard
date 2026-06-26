@@ -107,6 +107,12 @@ public class AdminController : ControllerBase
     public async Task<IActionResult> AssignExpert([FromBody] AssignExpertDto dto)
     {
         var role = Enum.Parse<ExpertRole>(dto.Role);
+
+        var alreadyAssigned = await _context.ExpertAssignments
+            .AnyAsync(ea => ea.RequestId == dto.RequestId && ea.ExpertId == dto.ExpertId);
+        if (alreadyAssigned)
+            return BadRequest(new { message = "This expert is already assigned to this request." });
+
         var assignment = new Core.Entities.ExpertAssignment
         {
             RequestId = dto.RequestId,

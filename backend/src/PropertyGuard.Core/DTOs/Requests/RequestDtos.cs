@@ -58,6 +58,7 @@ public class AssignedExpertDto
     public string Name { get; set; } = string.Empty;
     public string Status { get; set; } = string.Empty;
     public bool HasReport { get; set; }
+    public string? ReportContent { get; set; }
 }
 
 public class UpdateRequestStatusDto
