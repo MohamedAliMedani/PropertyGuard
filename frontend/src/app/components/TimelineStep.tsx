@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { Check, Circle, Clock } from "lucide-react";
 
 interface TimelineStepProps {
@@ -43,7 +44,7 @@ export function TimelineStep({ title, description, status, isLast, date }: Timel
             {title}
           </h4>
           {date && (
-            <span className="text-xs text-muted-foreground">{date}</span>
+            <span className="text-xs text-muted-foreground">{format(new Date(date), "dd/MM/yyyy")}</span>
           )}
         </div>
         {description && (

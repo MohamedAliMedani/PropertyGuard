@@ -20,10 +20,22 @@ export function ExpertPortalLayout() {
     : location.pathname.includes('/engineer') ? '/expert/engineer' : '/expert/government';
 
   const navigation = [
-    { name: t('common.dashboard'), href: baseUrl, icon: Home },
-    { name: t('expert.myCases'), href: baseUrl, icon: FileText },
-    ...(expertType !== 'GovExpert' ? [{ name: t('expert.scheduledVisits'), href: `${baseUrl}/schedule`, icon: Calendar }] : []),
-  ];
+    {
+      name: t("common.dashboard"),
+      href: baseUrl,
+      icon: Home,
+    },
+    {
+      name: t("expert.myCases"),
+      href: `${baseUrl}/cases`,
+      icon: FileText,
+    },
+    {
+      name: t("expert.scheduledVisits"),
+      href: `${baseUrl}/schedule`,
+      icon: Calendar,
+    },
+];
 
   const handleLogout = () => { logout(); navigate('/'); };
 

@@ -39,6 +39,8 @@ public class RequestDetailDto
     public string PackageName { get; set; } = string.Empty;
     public decimal PackagePrice { get; set; }
     public string? Notes { get; set; }
+    public string? CustomerName { get; set; }
+    public string? CustomerEmail { get; set; }
     public List<TimelineStepDto> Timeline { get; set; } = new();
     public List<AssignedExpertDto> Experts { get; set; } = new();
     public List<DocumentDto> Documents { get; set; } = new();

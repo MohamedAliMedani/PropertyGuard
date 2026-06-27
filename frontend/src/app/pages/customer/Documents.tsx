@@ -2,6 +2,7 @@ import { FileText, Upload, Download } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import { useMyRequests } from '../../../hooks/useRequests';
 import type { Document as DocType } from '../../../types';
+import { formatDate } from '../../../utils/date';
 
 export function Documents() {
   const { t } = useTranslation();
@@ -54,7 +55,7 @@ export function Documents() {
             </div>
             <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
               <span>{formatFileSize(doc.fileSize)}</span>
-              <span>{doc.uploadedAt}</span>
+              <span>{formatDate(doc.uploadedAt)}</span>
             </div>
             <button className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-sm group-hover:bg-[#059669] group-hover:text-white group-hover:border-[#059669]">
               <Download className="w-4 h-4" />

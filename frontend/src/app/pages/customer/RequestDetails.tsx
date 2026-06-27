@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useRequest } from '../../../hooks/useRequests';
 import { documentsApi } from '../../../api/documents';
 import { requestsApi } from '../../../api/requests';
+import { formatDate } from '../../../utils/date';
 
 export function RequestDetails() {
   const { id } = useParams();
@@ -67,7 +68,7 @@ export function RequestDetails() {
                 <Calendar className="w-5 h-5 text-[#8b5cf6] mt-0.5" />
                 <div>
                   <div className="text-sm text-muted-foreground">{t('request.estCompletion')}</div>
-                  <div className="font-medium">{request.estimatedCompletion || '-'}</div>
+                  <div className="font-medium">{formatDate(request.estimatedCompletion)}</div>
                 </div>
               </div>
             </div>
@@ -135,13 +136,13 @@ export function RequestDetails() {
                 </div>
               ))}
               {experts.length === 0 && (
-                <p className="text-sm text-muted-foreground">{t('request.noExperts', { defaultValue: 'No experts assigned yet' })}</p>
+                <p className="text-sm text-muted-foreground">{t('request.noExperts', { defaultValue: 'لا يوجد خبراء بعد تم تعينهم' })}</p>
               )}
             </div>
           </div>
 
           {/* Upcoming Visit */}
-          <div className="bg-gradient-to-br from-blue-50 to-emerald-50 rounded-xl p-6 border border-border">
+          {/* <div className="bg-gradient-to-br from-blue-50 to-emerald-50 rounded-xl p-6 border border-border">
             <div className="flex items-center gap-2 mb-3">
               <Calendar className="w-5 h-5 text-[#1e3a8a]" />
               <h3 className="font-semibold">{t('request.upcomingVisit')}</h3>
@@ -153,10 +154,10 @@ export function RequestDetails() {
                 {t('request.trackEngineer')}
               </button>
             </div>
-          </div>
+          </div> */}
 
           {/* Messages */}
-          <div className="bg-white rounded-xl p-6 border border-border">
+          {/* <div className="bg-white rounded-xl p-6 border border-border">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold">{t('nav.messages')}</h3>
               <MessageSquare className="w-5 h-5 text-muted-foreground" />
@@ -164,7 +165,7 @@ export function RequestDetails() {
             <button className="w-full px-4 py-2 bg-[#059669] text-white rounded-lg hover:bg-[#047857] transition-colors text-sm">
               {t('request.sendMessage')}
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

@@ -63,6 +63,7 @@ public class RequestsController : ControllerBase
 
         var request = await _context.VerificationRequests
             .Include(r => r.Property)
+            .Include(r => r.Customer)
             .Include(r => r.ServicePackage)
             .Include(r => r.Documents).ThenInclude(d => d.UploadedBy)
             .Include(r => r.ExpertAssignments).ThenInclude(ea => ea.Expert)
@@ -88,6 +89,8 @@ public class RequestsController : ControllerBase
             PackageName = request.ServicePackage.Name,
             PackagePrice = request.ServicePackage.Price,
             Notes = request.Notes,
+            CustomerName = request.Customer?.FullName,
+            CustomerEmail = request.Customer?.Email,
             Timeline = timeline,
             Experts = request.ExpertAssignments.Select(ea => new AssignedExpertDto
             {
@@ -215,6 +218,36 @@ public class RequestsController : ControllerBase
                         existingReport.Content = dto.Notes;
                         existingReport.CreatedAt = DateTime.UtcNow;
                     }
+                }
+
+                // Auto-advance overall request status based on all assignments
+                var allAssignments = await _context.ExpertAssignments
+                    .Where(ea => ea.RequestId == id)
+                    .ToListAsync();
+
+                // Mark this specific assignment as done in our local list
+                var localAssignment = allAssignments.FirstOrDefault(ea => ea.Id == assignment.Id);
+                if (localAssignment != null) localAssignment.Status = AssignmentStatus.Completed;
+
+                bool allDone = allAssignments.All(ea => ea.Status == AssignmentStatus.Completed);
+                bool anyRejected = dto.Status == RequestStatus.Rejected;
+
+                if (anyRejected)
+                {
+                    request.Status = RequestStatus.Rejected;
+                    request.Progress = 100;
+                    request.CompletedDate = DateTime.UtcNow;
+                }
+                else if (allDone)
+                {
+                    request.Status = RequestStatus.Completed;
+                    request.Progress = 100;
+                    request.CompletedDate = DateTime.UtcNow;
+                }
+                else
+                {
+                    // Keep in ExpertReview with current progress
+                    request.Status = RequestStatus.ExpertReview;
                 }
             }
         }

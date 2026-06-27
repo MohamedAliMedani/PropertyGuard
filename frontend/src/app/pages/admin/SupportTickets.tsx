@@ -1,6 +1,7 @@
 import { StatusBadge } from "../../components/StatusBadge";
 import { useTranslation } from 'react-i18next';
 import { useSupportTickets } from '../../../hooks/useSupportTickets';
+import { formatDate } from '../../../utils/date';
 
 export function SupportTickets() {
   const { t } = useTranslation();
@@ -67,7 +68,7 @@ export function SupportTickets() {
                   </span>
                 </td>
                 <td className="px-6 py-4"><StatusBadge status={ticket.status} /></td>
-                <td className="px-6 py-4 text-sm text-muted-foreground">{ticket.createdAt}</td>
+                <td className="px-6 py-4 text-sm text-muted-foreground">{formatDate(ticket.createdAt)}</td>
                 <td className="px-6 py-4">
                   <button className="text-sm text-[#059669] hover:underline">{t('common.view')}</button>
                 </td>

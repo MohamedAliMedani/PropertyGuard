@@ -1,6 +1,8 @@
 import { Calendar as CalendarIcon } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import { useVisits } from "../../../hooks/useVisits";
+import { formatDate } from '../../../utils/date';
+import { toast } from 'sonner';
 
 export function ExpertSchedule() {
   const { t } = useTranslation();
@@ -29,11 +31,11 @@ export function ExpertSchedule() {
                     <div className="font-medium">{event.propertyInfo}</div>
                     <div className="text-sm text-muted-foreground">{event.customerName}</div>
                   </div>
-                  <button className="text-sm text-[#059669] hover:underline">{t('common.edit')}</button>
+                  <button onClick={() => toast.info(t('common.edit') + ' – Feature coming soon')} className="text-sm text-[#059669] hover:underline">{t('common.edit')}</button>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                   <CalendarIcon className="w-4 h-4" />
-                  <span>{event.scheduledDate} at {event.scheduledTime}</span>
+                  <span>{formatDate(event.scheduledDate)} at {event.scheduledTime}</span>
                 </div>
               </div>
             ))}

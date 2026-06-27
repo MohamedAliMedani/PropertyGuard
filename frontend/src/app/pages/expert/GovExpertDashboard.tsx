@@ -6,6 +6,7 @@ import { StatsCard } from "../../components/StatsCard";
 import { StatusBadge } from "../../components/StatusBadge";
 import { useMyRequests } from "../../../hooks/useRequests";
 import { useAuth } from "../../../contexts/AuthContext";
+import { formatDate } from '../../../utils/date';
 
 export function GovExpertDashboard() {
   const { t } = useTranslation();
@@ -66,7 +67,7 @@ export function GovExpertDashboard() {
                 <StatusBadge status={case_.status} />
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">{t('expert.deadline')} {case_.estimatedCompletion ?? '-'}</span>
+                <span className="text-muted-foreground">{t('expert.deadline')} {formatDate(case_.estimatedCompletion)}</span>
                 <span className="text-[#1e3a8a] hover:underline">{t('expert.reviewCaseArrow')}</span>
               </div>
             </Link>

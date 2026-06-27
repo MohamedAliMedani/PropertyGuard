@@ -27,7 +27,7 @@
     "download": "Download",
     "upload": "Upload",
     "language": "Language",
-    "arabic": "\u0627\u0644\u0639\u0631\u0628\u064a\u0629",
+    "arabic": "العربية",
     "english": "English",
     "manage": "Manage",
     "active": "Active",
@@ -52,7 +52,7 @@
     "viewDetails": "View Details",
     "saveChanges": "Save Changes",
     "searchPlaceholder": "Search...",
-    "allRights": "\u00a9 2026 Darek. All rights reserved.",
+    "allRights": "© 2026 Darek. All rights reserved.",
     "propertyGuardEgypt": "Darek",
     "recommended": "Recommended",
     "mostPopular": "Most Popular"
@@ -348,7 +348,8 @@
     "sendMessage": "Send Message",
     "chooseFile": "Click to choose a file (PDF, JPG, PNG)",
     "siteVisitOnly": "This package is an on-site visit only",
-    "siteVisitDesc": "No documents required. A certified engineer will visit the unit to inspect it in person."
+    "siteVisitDesc": "No documents required. A certified engineer will visit the unit to inspect it in person.",
+    "allDocsRequired": "* All required documents must be uploaded before submitting."
   },
   "customer": {
     "welcomeBack": "Welcome Back",

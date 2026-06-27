@@ -49,6 +49,7 @@ public class UsersController : ControllerBase
         if (!string.IsNullOrEmpty(dto.FullName)) user.FullName = dto.FullName;
         if (!string.IsNullOrEmpty(dto.Phone)) user.Phone = dto.Phone;
         if (!string.IsNullOrEmpty(dto.PreferredLanguage)) user.PreferredLanguage = dto.PreferredLanguage;
+        if (!string.IsNullOrEmpty(dto.AvatarUrl)) user.AvatarUrl = dto.AvatarUrl;
 
         await _userManager.UpdateAsync(user);
         return NoContent();
@@ -60,4 +61,5 @@ public class UpdateProfileDto
     public string? FullName { get; set; }
     public string? Phone { get; set; }
     public string? PreferredLanguage { get; set; }
+    public string? AvatarUrl { get; set; }
 }

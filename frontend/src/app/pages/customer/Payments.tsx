@@ -2,6 +2,7 @@ import { CreditCard, Download } from "lucide-react";
 import { StatusBadge } from "../../components/StatusBadge";
 import { useTranslation } from 'react-i18next';
 import { useMyPayments } from '../../../hooks/usePayments';
+import { formatDate } from '../../../utils/date';
 
 export function Payments() {
   const { t } = useTranslation();
@@ -59,7 +60,7 @@ export function Payments() {
                 <td className="px-6 py-4 font-semibold">{t('common.egp')} {txn.amount.toLocaleString()}</td>
                 <td className="px-6 py-4 text-sm text-muted-foreground">{txn.method}</td>
                 <td className="px-6 py-4"><StatusBadge status={txn.status} /></td>
-                <td className="px-6 py-4 text-sm text-muted-foreground">{txn.paidAt || txn.createdAt}</td>
+                <td className="px-6 py-4 text-sm text-muted-foreground">{formatDate(txn.paidAt || txn.createdAt)}</td>
                 <td className="px-6 py-4">
                   <button className="flex items-center gap-1 text-sm text-[#059669] hover:underline">
                     <Download className="w-4 h-4" />

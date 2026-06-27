@@ -336,7 +336,7 @@ export function CreateRequest() {
                 return (
                   <div key={docKey} className="p-4 border border-border rounded-lg">
                     <label className="block text-sm font-medium mb-2">
-                      {t(`request.${docKey}`)}
+                      {t(`request.${docKey}`)} <span className="text-red-500">*</span>
                     </label>
                     {file ? (
                       <div className="flex items-center gap-2 p-3 bg-emerald-50 rounded-lg border border-emerald-200">
@@ -363,7 +363,7 @@ export function CreateRequest() {
                         />
                         <label
                           htmlFor={`file-${docKey}`}
-                          className="flex items-center gap-3 p-3 border-2 border-dashed border-border rounded-lg cursor-pointer hover:border-[#059669] transition-colors"
+                          className="flex items-center gap-3 p-3 border-2 border-dashed border-red-200 rounded-lg cursor-pointer hover:border-[#059669] transition-colors"
                         >
                           <Upload className="w-5 h-5 text-muted-foreground flex-shrink-0" />
                           <span className="text-sm text-muted-foreground">{t('request.chooseFile')}</span>
@@ -373,6 +373,13 @@ export function CreateRequest() {
                   </div>
                 );
               })}
+
+              {/* Missing docs warning */}
+              {getRequiredDocKeys().length > 0 && getRequiredDocKeys().some(k => !formData.documents[k]) && (
+                <p className="text-xs text-red-500">
+                  {t('request.allDocsRequired', { defaultValue: '* All required documents must be uploaded before submitting.' })}
+                </p>
+              )}
             </div>
 
             {/* Secure payment info */}
@@ -403,7 +410,7 @@ export function CreateRequest() {
               </button>
               <button
                 onClick={handleSubmit}
-                disabled={isSubmitting}
+                disabled={isSubmitting || (getRequiredDocKeys().length > 0 && getRequiredDocKeys().some(k => !formData.documents[k]))}
                 className="px-6 py-2.5 bg-[#059669] text-white rounded-lg hover:bg-[#047857] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
               >
                 {isSubmitting ? t('common.loading') : t('request.submitAndPay')}

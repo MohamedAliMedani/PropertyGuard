@@ -38,7 +38,7 @@ public class VisitsController : ControllerBase
         else if (role == "Customer")
             query = query.Where(v => v.Request.CustomerId == userId);
 
-        var visits = await query.OrderByDescending(v => v.ScheduledDate)
+        var visits = await query
             .Select(v => new VisitDto
             {
                 Id = v.Id,
@@ -51,7 +51,7 @@ public class VisitsController : ControllerBase
                 Address = v.Address,
                 Status = v.Status.ToString(),
                 CompletedAt = v.CompletedAt
-            }).ToListAsync();
+            }).OrderByDescending(v => v.ScheduledDate).ToListAsync();
 
         return Ok(visits);
     }

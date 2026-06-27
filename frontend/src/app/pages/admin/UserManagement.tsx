@@ -3,6 +3,7 @@ import { Search, Filter, UserPlus } from "lucide-react";
 import { StatusBadge } from "../../components/StatusBadge";
 import { useTranslation } from 'react-i18next';
 import { useAdminUsers } from '../../../hooks/useAdmin';
+import { formatDate } from '../../../utils/date';
 
 export function UserManagement() {
   const { t } = useTranslation();
@@ -75,7 +76,7 @@ export function UserManagement() {
                 <td className="px-6 py-4 text-sm">{user.requestCount}</td>
                 <td className="px-6 py-4 font-semibold">{t('common.egp')} {user.totalSpent?.toLocaleString()}</td>
                 <td className="px-6 py-4"><StatusBadge status={user.isActive ? 'active' : 'inactive'} /></td>
-                <td className="px-6 py-4 text-sm text-muted-foreground">{user.createdAt}</td>
+                <td className="px-6 py-4 text-sm text-muted-foreground">{formatDate(user.createdAt)}</td>
                 <td className="px-6 py-4">
                   <button className="text-sm text-[#059669] hover:underline">{t('common.view')}</button>
                 </td>

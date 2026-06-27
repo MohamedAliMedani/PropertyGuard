@@ -7,6 +7,8 @@ import { StatusBadge } from "../../components/StatusBadge";
 import { useVisits } from "../../../hooks/useVisits";
 import { useMyRequests } from "../../../hooks/useRequests";
 import { useAuth } from "../../../contexts/AuthContext";
+import { formatDate } from '../../../utils/date';
+import { toast } from 'sonner';
 
 export function EngineerDashboard() {
   const { t } = useTranslation();
@@ -75,19 +77,21 @@ export function EngineerDashboard() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-[#059669]" />
-                    <span>{visit.scheduledDate} at {visit.scheduledTime}</span>
+                    <span>{formatDate(visit.scheduledDate)} at {visit.scheduledTime}</span>
                   </div>
                 </div>
                 <div className="flex gap-2 mt-4">
                   <Link
-                    to={`/expert/engineer/case/${visit.requestNumber}`}
+                    to={`/expert/engineer/case/${visit.id}`}
                     className="flex-1 px-4 py-2 bg-[#059669] text-white text-center rounded-lg hover:bg-[#047857] transition-colors text-sm"
                   >
                     {t('expert.startVisit')}
                   </Link>
-                  <button className="px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors text-sm">
-                    {t('expert.reschedule')}
-                  </button>
+                  <button
+                    onClick={() => toast.info(t('expert.reschedule') + ' – ' + t('common.noData', { defaultValue: 'Feature coming soon' }))}
+                    className="px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors text-sm">
+                     {t('expert.reschedule')}
+                   </button>
                 </div>
               </div>
             ))}
@@ -106,9 +110,9 @@ export function EngineerDashboard() {
                   </div>
                   <StatusBadge status={visit.status} />
                 </div>
-                <div className="text-xs text-muted-foreground">{t('expert.completedDate')} {visit.completedAt ?? visit.scheduledDate}</div>
+                <div className="text-xs text-muted-foreground">{t('expert.completedDate')} {formatDate(visit.completedAt ?? visit.scheduledDate)}</div>
                 <Link
-                  to={`/expert/engineer/case/${visit.requestNumber}`}
+                  to={`/expert/engineer/case/${visit.id}`}
                   className="mt-3 block text-sm text-[#059669] hover:underline"
                 >
                   {t('expert.viewReportArrow')}

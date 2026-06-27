@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useRequest, useUpdateRequestStatus } from "../../../hooks/useRequests";
 import { useUploadDocument } from "../../../hooks/useDocuments";
 import { documentsApi } from "../../../api/documents";
+import { formatDate } from '../../../utils/date';
 
 export function ExpertCaseDetails() {
   const { t } = useTranslation();
@@ -68,7 +69,7 @@ export function ExpertCaseDetails() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold mb-2">{t('expert.caseDetails')} {request.requestNumber}</h1>
-        <p className="text-muted-foreground">{request.propertyType} - {request.location} • {t('expert.customer')} {request.packageName}</p>
+        <p className="text-muted-foreground">{request.propertyType} - {request.location} • {t('expert.customer')} {request.customerName || request.packageName}</p>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
@@ -175,7 +176,7 @@ export function ExpertCaseDetails() {
               </div>
               <div>
                 <div className="text-muted-foreground">{t('expert.deadline')}</div>
-                <div className="font-medium">{request.estimatedCompletion ?? '-'}</div>
+                <div className="font-medium">{formatDate(request.estimatedCompletion)}</div>
               </div>
             </div>
           </div>
@@ -185,7 +186,7 @@ export function ExpertCaseDetails() {
             <div className="space-y-2 text-sm">
               <div>
                 <div className="text-muted-foreground">{t('common.name')}</div>
-                <div className="font-medium">{request.packageName}</div>
+                <div className="font-medium">{request.customerName || t('expert.notAssigned')}</div>
               </div>
               {request.notes && (
                 <div>

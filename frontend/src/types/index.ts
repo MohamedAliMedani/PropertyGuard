@@ -43,6 +43,8 @@ export interface VerificationRequest {
   packageName: string;
   packagePrice: number;
   notes?: string;
+  customerName?: string;
+  customerEmail?: string;
   timeline?: TimelineStep[];
   experts?: AssignedExpert[];
   documents?: Document[];

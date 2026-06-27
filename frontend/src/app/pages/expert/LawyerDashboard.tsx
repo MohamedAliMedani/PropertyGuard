@@ -6,6 +6,7 @@ import { StatsCard } from "../../components/StatsCard";
 import { StatusBadge } from "../../components/StatusBadge";
 import { useMyRequests } from "../../../hooks/useRequests";
 import { useAuth } from "../../../contexts/AuthContext";
+import { formatDate } from '../../../utils/date';
 
 export function LawyerDashboard() {
   const { t } = useTranslation();
@@ -68,7 +69,7 @@ export function LawyerDashboard() {
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <div className="font-medium mb-1">{case_.requestNumber} - {case_.propertyType} - {case_.location}</div>
-                  <div className="text-sm text-muted-foreground">{t('expert.customer')} {case_.packageName}</div>
+                  <div className="text-sm text-muted-foreground">{t('expert.customer')} {case_.customerName || case_.packageName}</div>
                 </div>
                 <div className="flex items-center gap-2">
                   {case_.estimatedCompletion && (() => {
@@ -81,7 +82,7 @@ export function LawyerDashboard() {
                 </div>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">{t('expert.deadline')} {case_.estimatedCompletion ?? '-'}</span>
+                <span className="text-muted-foreground">{t('expert.deadline')} {formatDate(case_.estimatedCompletion)}</span>
                 <span className="text-[#1e3a8a] hover:underline">{t('expert.reviewCaseArrow')}</span>
               </div>
             </Link>

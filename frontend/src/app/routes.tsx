@@ -45,6 +45,7 @@ import { RegisterPage } from "./pages/auth/RegisterPage";
 import { ForgotPasswordPage } from "./pages/auth/ForgotPasswordPage";
 import { NotFound } from "./pages/NotFound";
 import { ProtectedRoute } from "./components/shared/ProtectedRoute";
+import ExpertCases from "./pages/expert/Cases";
 
 export const router = createBrowserRouter([
   {
@@ -89,7 +90,8 @@ export const router = createBrowserRouter([
         path: "expert/lawyer",
         element: <ProtectedRoute roles={['Lawyer']}><ExpertPortalLayout /></ProtectedRoute>,
         children: [
-          { index: true, Component: LawyerDashboard },
+          { index: true, Component: LawyerDashboard},
+          { path: "cases", Component: ExpertCases },
           { path: "case/:id", Component: ExpertCaseDetails },
           { path: "schedule", Component: ExpertSchedule },
         ],
@@ -99,6 +101,7 @@ export const router = createBrowserRouter([
         element: <ProtectedRoute roles={['Engineer']}><ExpertPortalLayout /></ProtectedRoute>,
         children: [
           { index: true, Component: EngineerDashboard },
+          { path: "cases", Component: ExpertCases },
           { path: "case/:id", Component: ExpertCaseDetails },
           { path: "schedule", Component: ExpertSchedule },
         ],
@@ -108,6 +111,7 @@ export const router = createBrowserRouter([
         element: <ProtectedRoute roles={['GovExpert']}><ExpertPortalLayout /></ProtectedRoute>,
         children: [
           { index: true, Component: GovExpertDashboard },
+          { path: "cases", Component: ExpertCases },
           { path: "case/:id", Component: ExpertCaseDetails },
         ],
       },

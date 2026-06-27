@@ -3,6 +3,7 @@ import { Search, Filter } from "lucide-react";
 import { StatusBadge } from "../../components/StatusBadge";
 import { useTranslation } from 'react-i18next';
 import { useMyRequests } from '../../../hooks/useRequests';
+import { formatDate } from '../../../utils/date';
 
 export function MyRequests() {
   const { t } = useTranslation();
@@ -79,7 +80,7 @@ export function MyRequests() {
                       <span className="text-xs text-muted-foreground">{request.progress}%</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-muted-foreground">{request.submittedDate}</td>
+                  <td className="px-6 py-4 text-sm text-muted-foreground">{formatDate(request.submittedDate)}</td>
                   <td className="px-6 py-4">
                     <Link
                       to={`/customer/requests/${request.id}`}
