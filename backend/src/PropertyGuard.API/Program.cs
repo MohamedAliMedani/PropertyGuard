@@ -80,15 +80,13 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // CORS
-var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend", policy =>
+    options.AddPolicy("AllowAll", policy =>
     {
-        policy.WithOrigins(allowedOrigins)
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
     });
 });
 
@@ -103,7 +101,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseCors("AllowFrontend");
+app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
