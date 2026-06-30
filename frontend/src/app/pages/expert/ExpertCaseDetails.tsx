@@ -1,4 +1,4 @@
-import { useParams, useLocation } from "react-router";
+import { useParams, useLocation, useNavigate } from "react-router";
 import { Upload, Download, Save } from "lucide-react";
 import { useState, useRef } from "react";
 import { toast } from "sonner";
@@ -12,6 +12,7 @@ export function ExpertCaseDetails() {
   const { t } = useTranslation();
   const { id } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const [notes, setNotes] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("approved");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -45,6 +46,9 @@ export function ExpertCaseDetails() {
         notes,
       });
       toast.success(t('expert.reportSubmitted'));
+      // Navigate back to cases list
+      const basePath = location.pathname.split('/case/')[0];
+      navigate(`${basePath}/cases`);
     } catch {
       toast.error('Failed to submit report');
     }

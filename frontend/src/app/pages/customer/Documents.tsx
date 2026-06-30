@@ -1,12 +1,20 @@
-import { FileText, Upload, Download } from "lucide-react";
+import { FileText, Upload, Download, X } from "lucide-react";
+import { useState, useRef } from "react";
+import { toast } from "sonner";
 import { useTranslation } from 'react-i18next';
 import { useMyRequests } from '../../../hooks/useRequests';
+import { useUploadDocument } from '../../../hooks/useDocuments';
+import { documentsApi } from '../../../api/documents';
 import type { Document as DocType } from '../../../types';
 import { formatDate } from '../../../utils/date';
 
 export function Documents() {
   const { t } = useTranslation();
   const { data: requests, isLoading, error } = useMyRequests();
+  const { mutateAsync: uploadDocument, isPending: isUploading } = useUploadDocument();
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [selectedRequestId, setSelectedRequestId] = useState<number | ''>('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (isLoading) return <div className="flex items-center justify-center py-20"><div className="text-muted-foreground">{t('common.loading')}</div></div>;
   if (error) return <div className="text-center py-20 text-red-500">Failed to load data</div>;
@@ -21,6 +29,21 @@ export function Documents() {
     return `${(bytes / 1024).toFixed(1)} KB`;
   };
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !selectedRequestId) return;
+
+    try {
+      await uploadDocument({ requestId: selectedRequestId as number, file });
+      toast.success(t('customer.uploadSuccess', { defaultValue: 'Document uploaded successfully' }));
+      setShowUploadModal(false);
+      setSelectedRequestId('');
+    } catch {
+      toast.error(t('customer.uploadError', { defaultValue: 'Failed to upload document' }));
+    }
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -28,11 +51,69 @@ export function Documents() {
           <h1 className="text-3xl font-bold mb-2">{t('customer.myDocuments')}</h1>
           <p className="text-muted-foreground">{t('customer.myDocumentsDesc')}</p>
         </div>
-        <button className="flex items-center gap-2 px-5 py-2.5 bg-[#059669] text-white rounded-lg hover:bg-[#047857] transition-colors">
+        <button
+          onClick={() => setShowUploadModal(true)}
+          className="flex items-center gap-2 px-5 py-2.5 bg-[#059669] text-white rounded-lg hover:bg-[#047857] transition-colors"
+        >
           <Upload className="w-4 h-4" />
           {t('customer.uploadDocument')}
         </button>
       </div>
+
+      {/* Upload Modal */}
+      {showUploadModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4 border border-border shadow-lg">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold">{t('customer.uploadDocument')}</h2>
+              <button onClick={() => { setShowUploadModal(false); setSelectedRequestId(''); }} className="p-1 hover:bg-muted rounded">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  {t('customer.selectRequest', { defaultValue: 'Select Request' })} *
+                </label>
+                <select
+                  value={selectedRequestId}
+                  onChange={(e) => setSelectedRequestId(e.target.value ? Number(e.target.value) : '')}
+                  className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#059669]"
+                >
+                  <option value="">{t('customer.chooseRequest', { defaultValue: 'Choose a request...' })}</option>
+                  {(requests || []).map((req) => (
+                    <option key={req.id} value={req.id}>
+                      {req.requestNumber} - {req.propertyType} ({req.location})
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                  disabled={!selectedRequestId || isUploading}
+                />
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={!selectedRequestId || isUploading}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-border rounded-lg hover:border-[#059669] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Upload className="w-5 h-5 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">
+                    {isUploading
+                      ? t('common.loading')
+                      : t('request.chooseFile', { defaultValue: 'Choose a file to upload' })}
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {documents.length === 0 && (
         <div className="text-center py-12 text-muted-foreground">
@@ -57,7 +138,7 @@ export function Documents() {
               <span>{formatFileSize(doc.fileSize)}</span>
               <span>{formatDate(doc.uploadedAt)}</span>
             </div>
-            <button className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-sm group-hover:bg-[#059669] group-hover:text-white group-hover:border-[#059669]">
+            <button onClick={() => documentsApi.download(doc.id)} className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-sm group-hover:bg-[#059669] group-hover:text-white group-hover:border-[#059669]">
               <Download className="w-4 h-4" />
               {t('common.download')}
             </button>

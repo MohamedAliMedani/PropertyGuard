@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { Building, Home, MapPin, FileText, Upload, CreditCard, CheckCircle, X } from "lucide-react";
+import { Building, Home, MapPin, FileText, Upload, CreditCard, CheckCircle, X, Wallet } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from 'react-i18next';
 import { usePackages } from '../../../hooks/usePackages';
 import { useCreateRequest } from '../../../hooks/useRequests';
 import { useUploadDocument } from '../../../hooks/useDocuments';
+import { useCreatePayment } from '../../../hooks/usePayments';
 
 export function CreateRequest() {
   const navigate = useNavigate();
@@ -18,13 +19,20 @@ export function CreateRequest() {
     price: "",
     servicePackage: "",
     documents: {} as Record<string, File>,
+    paymentMethod: "card" as "card" | "instapay",
+    cardNumber: "",
+    cardholderName: "",
+    expiryDate: "",
+    cvv: "",
+    instaPayReference: "",
   });
 
   const { data: packagesData, isLoading: packagesLoading } = usePackages();
   const { mutateAsync: createRequest, isPending: isCreating } = useCreateRequest();
   const { mutateAsync: uploadDocument, isPending: isUploading } = useUploadDocument();
+  const { mutateAsync: createPayment, isPending: isPaying } = useCreatePayment();
 
-  const isSubmitting = isCreating || isUploading;
+  const isSubmitting = isCreating || isUploading || isPaying;
   const isAr = i18n.language === 'ar';
 
   const propertyTypes = [
@@ -69,6 +77,18 @@ export function CreateRequest() {
     return ['propertyContract'];
   };
 
+  const isPaymentValid = () => {
+    if (formData.paymentMethod === 'card') {
+      return (
+        formData.cardNumber.replace(/\s/g, '').length >= 13 &&
+        formData.cardholderName.trim().length > 0 &&
+        /^\d{2}\/\d{2}$/.test(formData.expiryDate) &&
+        formData.cvv.length >= 3
+      );
+    }
+    return formData.instaPayReference.trim().length > 0;
+  };
+
   const handleSubmit = async () => {
     try {
       if (!selectedPackage) return;
@@ -86,6 +106,16 @@ export function CreateRequest() {
         for (const file of files) {
           await uploadDocument({ requestId: result.id, file });
         }
+      }
+
+      // Create payment
+      if (result?.id) {
+        const methodMap: Record<string, number> = { card: 0, instapay: 1 };
+        await createPayment({
+          requestId: result.id,
+          amount: selectedPackage.price,
+          method: methodMap[formData.paymentMethod] ?? 0,
+        });
       }
 
       toast.success(t('request.submitSuccess'));
@@ -106,19 +136,33 @@ export function CreateRequest() {
     setFormData({ ...formData, documents: rest });
   };
 
+  const formatCardNumber = (value: string) => {
+    const digits = value.replace(/\D/g, '').slice(0, 16);
+    return digits.replace(/(\d{4})(?=\d)/g, '$1 ');
+  };
+
+  const formatExpiry = (value: string) => {
+    const digits = value.replace(/\D/g, '').slice(0, 4);
+    if (digits.length >= 3) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+    return digits;
+  };
+
   const stepLabels = [
     t('request.package'),
     t('request.propertyType'),
     t('request.details'),
     t('request.documents'),
+    t('request.payment'),
   ];
+
+  const totalSteps = 5;
 
   return (
     <div className="max-w-5xl mx-auto">
       {/* Progress Steps */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
-          {[1, 2, 3, 4].map((s) => (
+          {Array.from({ length: totalSteps }, (_, i) => i + 1).map((s) => (
             <div key={s} className="flex items-center flex-1">
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center ${
@@ -127,7 +171,7 @@ export function CreateRequest() {
               >
                 {step > s ? <CheckCircle className="w-5 h-5" /> : s}
               </div>
-              {s < 4 && (
+              {s < totalSteps && (
                 <div className={`flex-1 h-1 mx-2 ${step > s ? "bg-[#059669]" : "bg-gray-200"}`} />
               )}
             </div>
@@ -382,19 +426,164 @@ export function CreateRequest() {
               )}
             </div>
 
-            {/* Secure payment info */}
-            <div className="mt-8 p-6 bg-gradient-to-br from-blue-50 to-emerald-50 rounded-xl border border-border">
-              <div className="flex items-start gap-4">
-                <CreditCard className="w-6 h-6 text-[#1e3a8a] flex-shrink-0" />
+            <div className="flex justify-between mt-8">
+              <button
+                onClick={() => setStep(3)}
+                className="px-6 py-2.5 border border-border rounded-lg hover:bg-muted transition-colors"
+              >
+                {t('common.back')}
+              </button>
+              <button
+                onClick={() => setStep(5)}
+                disabled={getRequiredDocKeys().length > 0 && getRequiredDocKeys().some(k => !formData.documents[k])}
+                className="px-6 py-2.5 bg-[#059669] text-white rounded-lg hover:bg-[#047857] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+              >
+                {t('common.continue')}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 5: Payment Details */}
+        {step === 5 && (
+          <div>
+            <h2 className="text-2xl font-bold mb-2">{t('request.paymentDetails')}</h2>
+            <p className="text-muted-foreground mb-6">{t('request.paymentDetailsDesc')}</p>
+
+            <div className="grid lg:grid-cols-3 gap-6">
+              {/* Payment Form */}
+              <div className="lg:col-span-2 space-y-6">
+                {/* Payment Method Selection */}
                 <div>
-                  <h4 className="font-semibold mb-2">{t('request.securePayment')}</h4>
-                  <p className="text-sm text-muted-foreground mb-3">
-                    {t('request.securePaymentDesc')}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="text-xs px-2 py-1 bg-white rounded-full border border-border">Visa</span>
-                    <span className="text-xs px-2 py-1 bg-white rounded-full border border-border">Mastercard</span>
-                    <span className="text-xs px-2 py-1 bg-white rounded-full border border-border">InstaPay</span>
+                  <label className="block text-sm font-medium mb-3">{t('request.paymentMethod')}</label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      onClick={() => setFormData({ ...formData, paymentMethod: 'card' })}
+                      className={`p-4 border-2 rounded-xl text-left transition-all ${
+                        formData.paymentMethod === 'card'
+                          ? 'border-[#059669] bg-emerald-50'
+                          : 'border-border hover:border-gray-300'
+                      }`}
+                    >
+                      <CreditCard className={`w-6 h-6 mb-2 ${formData.paymentMethod === 'card' ? 'text-[#059669]' : 'text-muted-foreground'}`} />
+                      <div className="font-medium text-sm">{t('request.creditCard')}</div>
+                      <div className="text-xs text-muted-foreground mt-1">Visa, Mastercard</div>
+                    </button>
+                    <button
+                      onClick={() => setFormData({ ...formData, paymentMethod: 'instapay' })}
+                      className={`p-4 border-2 rounded-xl text-left transition-all ${
+                        formData.paymentMethod === 'instapay'
+                          ? 'border-[#059669] bg-emerald-50'
+                          : 'border-border hover:border-gray-300'
+                      }`}
+                    >
+                      <Wallet className={`w-6 h-6 mb-2 ${formData.paymentMethod === 'instapay' ? 'text-[#059669]' : 'text-muted-foreground'}`} />
+                      <div className="font-medium text-sm">{t('request.instaPay')}</div>
+                      <div className="text-xs text-muted-foreground mt-1">InstaPay</div>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Card Details */}
+                {formData.paymentMethod === 'card' && (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">{t('request.cardNumber')} *</label>
+                      <input
+                        type="text"
+                        value={formData.cardNumber}
+                        onChange={(e) => setFormData({ ...formData, cardNumber: formatCardNumber(e.target.value) })}
+                        className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#059669]"
+                        placeholder={t('request.cardNumberPlaceholder')}
+                        maxLength={19}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">{t('request.cardholderName')} *</label>
+                      <input
+                        type="text"
+                        value={formData.cardholderName}
+                        onChange={(e) => setFormData({ ...formData, cardholderName: e.target.value })}
+                        className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#059669]"
+                        placeholder={t('request.cardholderNamePlaceholder')}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">{t('request.expiryDate')} *</label>
+                        <input
+                          type="text"
+                          value={formData.expiryDate}
+                          onChange={(e) => setFormData({ ...formData, expiryDate: formatExpiry(e.target.value) })}
+                          className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#059669]"
+                          placeholder={t('request.expiryDatePlaceholder')}
+                          maxLength={5}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-2">{t('request.cvv')} *</label>
+                        <input
+                          type="text"
+                          value={formData.cvv}
+                          onChange={(e) => setFormData({ ...formData, cvv: e.target.value.replace(/\D/g, '').slice(0, 4) })}
+                          className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#059669]"
+                          placeholder={t('request.cvvPlaceholder')}
+                          maxLength={4}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* InstaPay Details */}
+                {formData.paymentMethod === 'instapay' && (
+                  <div>
+                    <label className="block text-sm font-medium mb-2">{t('request.instaPayReference')} *</label>
+                    <input
+                      type="text"
+                      value={formData.instaPayReference}
+                      onChange={(e) => setFormData({ ...formData, instaPayReference: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#059669]"
+                      placeholder={t('request.instaPayReferencePlaceholder')}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Order Summary Sidebar */}
+              <div>
+                <div className="bg-gradient-to-br from-blue-50 to-emerald-50 rounded-xl p-6 border border-border sticky top-6">
+                  <h3 className="font-semibold mb-4">{t('request.orderSummary')}</h3>
+                  <div className="space-y-3 text-sm">
+                    {selectedPackage && (
+                      <>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">{t('request.package')}</span>
+                          <span className="font-medium">{isAr ? selectedPackage.nameAr : selectedPackage.name}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">{t('request.propertyType')}</span>
+                          <span className="font-medium">{t(`request.${formData.propertyType}`)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">{t('request.location')}</span>
+                          <span className="font-medium">{formData.location}</span>
+                        </div>
+                        <hr className="border-border" />
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">{t('request.serviceFee')}</span>
+                          <span className="font-medium">{t('common.egp')} {selectedPackage.price.toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between text-base font-semibold pt-2 border-t border-border">
+                          <span>{t('request.total')}</span>
+                          <span className="text-[#059669]">{t('common.egp')} {selectedPackage.price.toLocaleString()}</span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                  <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
+                    <CreditCard className="w-4 h-4" />
+                    <span>{t('request.securePayment')}</span>
                   </div>
                 </div>
               </div>
@@ -402,7 +591,7 @@ export function CreateRequest() {
 
             <div className="flex justify-between mt-8">
               <button
-                onClick={() => setStep(3)}
+                onClick={() => setStep(4)}
                 className="px-6 py-2.5 border border-border rounded-lg hover:bg-muted transition-colors"
                 disabled={isSubmitting}
               >
@@ -410,7 +599,7 @@ export function CreateRequest() {
               </button>
               <button
                 onClick={handleSubmit}
-                disabled={isSubmitting || (getRequiredDocKeys().length > 0 && getRequiredDocKeys().some(k => !formData.documents[k]))}
+                disabled={isSubmitting || !isPaymentValid()}
                 className="px-6 py-2.5 bg-[#059669] text-white rounded-lg hover:bg-[#047857] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
               >
                 {isSubmitting ? t('common.loading') : t('request.submitAndPay')}
